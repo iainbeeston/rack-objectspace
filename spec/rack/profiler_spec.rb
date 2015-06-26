@@ -1,11 +1,15 @@
 require 'spec_helper'
+require 'support/rack_helpers'
+require 'support/rack_matchers'
+require 'rack/mock'
 
 describe Rack::Profiler do
-  it 'has a version number' do
-    expect(Rack::Profiler::VERSION).not_to be nil
-  end
+  include RackHelpers
 
-  it 'does something useful' do
-    expect(false).to eq(true)
+  it 'does not modify the response from the app' do
+    env = [418, { 'Content-Type' => 'text/plain', 'Content-Length' => '12' }, ["I'm a teapot"]]
+    app = ->(_) { env }
+    profiler = profiler(app)
+    expect(request(profiler, '/')).to match_response(response(env))
   end
 end

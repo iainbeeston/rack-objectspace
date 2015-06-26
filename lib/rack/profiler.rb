@@ -1,7 +1,11 @@
-require "rack/profiler/version"
-
 module Rack
-  module Profiler
-    # Your code goes here...
+  class Profiler
+    def initialize(app)
+      @app = app
+    end
+
+    def call(env)
+      @app.call(env)
+    end
   end
 end
