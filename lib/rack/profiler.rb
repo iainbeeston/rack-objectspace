@@ -55,9 +55,8 @@ module Rack
     def request_id(env)
       request_path = env['PATH_INFO'].tr_s(::File::SEPARATOR, '-').downcase
       request_method = env['REQUEST_METHOD'].downcase
-      thread_id = Thread.current.object_id
-      random_salt = SecureRandom.hex(4)
-      "#{request_path}-#{request_method}-#{thread_id}-#{random_salt}"
+      random_salt = SecureRandom.hex(8)
+      "#{request_path}-#{request_method}-#{random_salt}"
     end
   end
 end
