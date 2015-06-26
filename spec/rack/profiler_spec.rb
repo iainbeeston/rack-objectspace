@@ -66,10 +66,10 @@ describe Rack::Profiler do
   describe '#store_object' do
     it 'store each property separately in a key containing the address and property name' do
       expect {
-        middleware.store_object('key', 'address' => '0x7f930a820010', 'type' => 'OBJECT')
+        middleware.store_object('key', 'address' => '0x7f930a820010', 'type' => 'OBJECT', 'flags' => { 'marked' => true })
       }.to change {
-        store['key-0x7f930a820010-type']
-      }.from(nil).to('OBJECT')
+        [store['key-0x7f930a820010-type'], store['key-0x7f930a820010-flags']]
+      }.from([nil, nil]).to(['OBJECT', '{"marked":true}'])
     end
 
     it 'stores nothing if there is no address property' do

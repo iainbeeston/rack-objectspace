@@ -1,5 +1,6 @@
 require 'objspace'
 require 'yajl'
+require 'json'
 require 'securerandom'
 
 module Rack
@@ -51,7 +52,7 @@ module Rack
       object_id = obj.delete('address')
       if object_id
         obj.each do |attr, value|
-          @store["#{request_id}-#{object_id}-#{attr}"] = value.to_s
+          @store["#{request_id}-#{object_id}-#{attr}"] = value.to_json.gsub(/^"(.*)"$/, '\1')
         end
       end
     end
