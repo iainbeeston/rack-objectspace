@@ -53,7 +53,7 @@ module Rack
     end
 
     def request_id(env)
-      request_path = env['PATH_INFO'].tr_s(::File::SEPARATOR, '-').downcase
+      request_path = env['PATH_INFO'].tr_s(::File::SEPARATOR, '-').sub!(/^-/, '').downcase
       request_method = env['REQUEST_METHOD'].downcase
       random_salt = SecureRandom.hex(8)
       "#{request_path}-#{request_method}-#{random_salt}"

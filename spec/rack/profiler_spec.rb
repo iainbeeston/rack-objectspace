@@ -57,7 +57,7 @@ describe Rack::Profiler do
     end
 
     it 'starts with the request path and method' do
-      expect(middleware.request_id(request('/my/api/endpoint', method: 'GET'))).to start_with('-my-api-endpoint-get')
+      expect(middleware.request_id(request('/my/api/endpoint', method: 'GET'))).to start_with('my-api-endpoint-get')
     end
   end
 
