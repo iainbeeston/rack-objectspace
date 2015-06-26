@@ -1,6 +1,6 @@
 module RackHelpers
-  def profiler(app)
-    Rack::Lint.new(Rack::Profiler.new(app))
+  def rack(middleware)
+    Rack::Lint.new(middleware)
   end
 
   def request(app, path, headers = {})
