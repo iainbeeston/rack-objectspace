@@ -45,7 +45,7 @@ describe Rack::Profiler do
           response(middleware, '/endpoint')
         }.to change {
           file_store_keys(store_id).map { |k| store[k] }
-        }.from([]).to([{ 'type' => 'ARRAY' }, { 'type' => 'OBJECT' }])
+        }.from([]).to(['ARRAY', 'OBJECT'])
       end
     end
   end
@@ -64,12 +64,12 @@ describe Rack::Profiler do
   end
 
   describe '#store_object' do
-    it 'stores the hash by the address property' do
+    it 'store each property separately in a key containing the address and property name' do
       expect {
         middleware.store_object('key', 'address' => '0x7f930a820010', 'type' => 'OBJECT')
       }.to change {
-        store['key-0x7f930a820010']
-      }.from(nil).to('type' => 'OBJECT')
+        store['key-0x7f930a820010-type']
+      }.from(nil).to('OBJECT')
     end
 
     it 'stores nothing if there is no address property' do

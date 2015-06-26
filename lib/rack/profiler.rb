@@ -49,7 +49,11 @@ module Rack
 
     def store_object(request_id, obj)
       object_id = obj.delete('address')
-      @store["#{request_id}-#{object_id}"] = obj if object_id
+      if object_id
+        obj.each do |attr, value|
+          @store["#{request_id}-#{object_id}-#{attr}"] = value.to_s
+        end
+      end
     end
 
     def request_id(request:, pid:, time: Time)
