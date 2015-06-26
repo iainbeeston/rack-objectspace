@@ -15,13 +15,13 @@ module Rack
     def call(env)
       result = @app.call(env)
 
-      dumper = Thread.new { dump_allocations }
+      dumper = Thread.new { dump_allocations(env) }
       dumper.join unless @async
 
       result
     end
 
-    def dump_allocations
+    def dump_allocations(env)
       read, write = IO.pipe
 
       if pid = fork
@@ -34,12 +34,12 @@ module Rack
       else
         # child
         write.close
-        parse_dump(input: read)
+        parse_dump(input: read, key: request_id(env))
         read.close
       end
     end
 
-    def parse_dump(input:, key: request_id, run: ->(id, obj) { store_object(id, obj) })
+    def parse_dump(input:, key:, run: ->(id, obj) { store_object(id, obj) })
       parser = Yajl::Parser.new
       parser.on_parse_complete = lambda do |obj|
         run.call(key, obj)
@@ -52,10 +52,12 @@ module Rack
       @store["#{request_id}-#{object_id}"] = obj if object_id
     end
 
-    def request_id
+    def request_id(env)
+      request_path = env['PATH_INFO'].tr_s(::File::SEPARATOR, '-').downcase
+      request_method = env['REQUEST_METHOD'].downcase
       thread_id = Thread.current.object_id
       random_salt = SecureRandom.hex(4)
-      "#{thread_id}-#{random_salt}"
+      "#{request_path}-#{request_method}-#{thread_id}-#{random_salt}"
     end
   end
 end

@@ -1,13 +1,13 @@
 module RackHelpers
-  def rack(middleware)
+  def linter(middleware)
     Rack::Lint.new(middleware)
   end
 
-  def request(app, path, headers = {})
-    Rack::MockRequest.new(app).get(path, headers)
+  def request(path, opts = {})
+    Rack::MockRequest.env_for(path, opts)
   end
 
-  def response(env)
-    Rack::MockResponse.new(*env)
+  def response(middleware, path, headers = {})
+    Rack::MockRequest.new(linter(middleware)).get(path, headers)
   end
 end

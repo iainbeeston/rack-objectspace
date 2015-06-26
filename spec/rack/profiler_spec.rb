@@ -15,7 +15,6 @@ describe Rack::Profiler do
   let(:app) { ->(_) { env } }
   let(:store) { Hash.new }
   let(:middleware) { described_class.new(app, store: store, async: false, object_space: objects) }
-  let(:server) { rack(middleware) }
 
   let(:object_data) do
     <<-STR
@@ -26,7 +25,7 @@ describe Rack::Profiler do
 
   describe '#call' do
     it 'does not modify the response from the app' do
-      expect(request(server, '/')).to match_response(response(env))
+      expect(response(middleware, '/endpoint')).to match_response(response(middleware, '/endpoint'))
     end
 
     context 'with real data' do
@@ -41,7 +40,7 @@ describe Rack::Profiler do
 
       it 'saves every object in the object space to the store' do
         expect {
-          request(server, '/')
+          response(middleware, '/endpoint')
         }.to change {
           file_store_keys(store_id).map { |k| store[k] }
         }.from([]).to([{ 'type' => 'ARRAY' }, { 'type' => 'OBJECT' }])
@@ -51,7 +50,14 @@ describe Rack::Profiler do
 
   describe '#request_id' do
     it 'returns a unique string every time' do
-      expect(middleware.request_id).to_not eq(middleware.request_id)
+      request_ids = 2.times.map do
+        middleware.request_id(request('/endpoint'))
+      end
+      expect(request_ids.first).to_not eq(request_ids.last)
+    end
+
+    it 'starts with the request path and method' do
+      expect(middleware.request_id(request('/my/api/endpoint', method: 'GET'))).to start_with('-my-api-endpoint-get')
     end
   end
 
