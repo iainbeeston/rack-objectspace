@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'support/rack_helpers'
 require 'support/object_space_helpers'
 require 'support/file_store_helpers'
+require 'support/time_helpers'
 require 'support/rack_matchers'
 require 'rack/mock'
 require 'securerandom'
@@ -10,6 +11,7 @@ describe Rack::Profiler do
   include RackHelpers
   include ObjectSpaceHelpers
   include FileStoreHelpers
+  include TimeHelpers
 
   let(:env) { [418, { 'Content-Type' => 'text/plain', 'Content-Length' => '12' }, ["I'm a teapot"]] }
   let(:app) { ->(_) { env } }
@@ -51,13 +53,13 @@ describe Rack::Profiler do
   describe '#request_id' do
     it 'returns a unique string every time' do
       request_ids = 2.times.map do
-        middleware.request_id(request('/endpoint'))
+        middleware.request_id(request: request('/endpoint'), pid: 12345)
       end
       expect(request_ids.first).to_not eq(request_ids.last)
     end
 
-    it 'starts with the request path and method' do
-      expect(middleware.request_id(request('/my/api/endpoint', method: 'GET'))).to start_with('my-api-endpoint-get')
+    it 'includes the process id, timestamp, request path and method' do
+      expect(middleware.request_id(request: request('/my/api/endpoint', method: 'GET'), pid: 12345, time: time(Time.at(1435347800)))).to start_with('12345-1435347800-my-api-endpoint-get')
     end
   end
 

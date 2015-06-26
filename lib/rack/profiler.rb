@@ -34,7 +34,7 @@ module Rack
       else
         # child
         write.close
-        parse_dump(input: read, key: request_id(env))
+        parse_dump(input: read, key: request_id(request: env, pid: Process.ppid))
         read.close
       end
     end
@@ -52,11 +52,12 @@ module Rack
       @store["#{request_id}-#{object_id}"] = obj if object_id
     end
 
-    def request_id(env)
-      request_path = env['PATH_INFO'].tr_s(::File::SEPARATOR, '-').sub!(/^-/, '').downcase
-      request_method = env['REQUEST_METHOD'].downcase
-      random_salt = SecureRandom.hex(8)
-      "#{request_path}-#{request_method}-#{random_salt}"
+    def request_id(request:, pid:, time: Time)
+      timestamp = time.now.to_i
+      request_path = request['PATH_INFO'].tr_s(::File::SEPARATOR, '-').sub!(/^-/, '').downcase
+      request_method = request['REQUEST_METHOD'].downcase
+      random_salt = SecureRandom.hex(4)
+      "#{pid}-#{timestamp}-#{request_path}-#{request_method}-#{random_salt}"
     end
   end
 end
