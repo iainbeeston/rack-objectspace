@@ -27,6 +27,7 @@ module Rack
       if pid = fork
         # parent
         read.close
+        GC.start
         @object_space.dump_all(output: write)
         write.close
         Process.wait(pid) unless @async
