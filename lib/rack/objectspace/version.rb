@@ -1,5 +1,5 @@
 module Rack
-  class Profiler
+  class Objectspace
     VERSION = "0.1.0"
   end
 end

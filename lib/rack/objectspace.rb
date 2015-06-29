@@ -3,7 +3,7 @@ require 'yajl'
 require 'securerandom'
 
 module Rack
-  class Profiler
+  class Objectspace
     KEY_SEPARATOR = '-'.freeze
 
     def initialize(app, store:, async: true, object_space: ObjectSpace)
@@ -63,7 +63,7 @@ module Rack
       request_path = request['PATH_INFO'].tr_s(::File::SEPARATOR, '-').sub!(/^-/, '').downcase
       request_method = request['REQUEST_METHOD'].downcase
       random_salt = SecureRandom.hex(4)
-      ['rack-profiler', pid, timestamp, request_path, request_method, random_salt].join(KEY_SEPARATOR)
+      ['rack-objectspace', pid, timestamp, request_path, request_method, random_salt].join(KEY_SEPARATOR)
     end
   end
 end

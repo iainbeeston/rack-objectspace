@@ -1,16 +1,16 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'rack/profiler/version'
+require 'rack/objectspace/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "rack-profiler"
-  spec.version       = Rack::Profiler::VERSION
+  spec.name          = "rack-objectspace"
+  spec.version       = Rack::Objectspace::VERSION
   spec.authors       = ["Iain Beeston"]
   spec.email         = ["iain.beeston@gmail.com"]
 
   spec.summary       = %q{Saves objectspace to a key-value store after every request}
-  spec.homepage      = "http://github.com/iainbeeston/rack-profiler"
+  spec.homepage      = "http://github.com/iainbeeston/rack-objectspace"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(spec|tmp)/}) }

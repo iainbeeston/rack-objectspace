@@ -1,5 +1,5 @@
-# rack-profiler
-[![Build Status](https://travis-ci.org/iainbeeston/rack-profiler.svg)](https://travis-ci.org/iainbeeston/rack-profiler)
+# rack-objectspace
+[![Build Status](https://travis-ci.org/iainbeeston/rack-objectspace.svg)](https://travis-ci.org/iainbeeston/rack-objectspace)
 
 This is my attempt to make a rack middleware that profiles memory usage in rails (or any rack-based app), with the aim of detecting memory leaks. After *every* request it takes a dump of the objectspace and saves it to a data store of your choice\*.
 
@@ -7,13 +7,13 @@ This is my attempt to make a rack middleware that profiles memory usage in rails
 
 ## Getting Started
 
-After installing the gem, insert rack-profiler into your middleware stack:
+After installing the gem, insert rack-objectspace into your middleware stack:
 
 ~~~
-config.middleware.insert_after ActionDispatch::Static, Rack::Profiler, store: Moneta.new(:Redis)
+config.middleware.insert_after ActionDispatch::Static, Rack::Objectspace, store: Moneta.new(:Redis)
 ~~~
 
-I'd recommend installing rack-profiler as low as you can in your stack. Preferably only requests that hit your own application code should be profiled.
+I'd recommend installing rack-objectspace as low as you can in your stack. Preferably only requests that hit your own application code should be profiled.
 
 ## Warnings
 
@@ -21,11 +21,11 @@ I'd recommend installing rack-profiler as low as you can in your stack. Preferab
 
 Every objectspace dump is unique to a particular ruby process. Make sure your server is only running a single worker when profiling.
 
-I've found that with unicorn, requests will usually time-out when using rack-profiler. Try increasing the `timeout` value in unicorn.rb.
+I've found that with unicorn, requests will usually time-out when using rack-objectspace. Try increasing the `timeout` value in unicorn.rb.
 
 ## How to find memory leaks
 
-Right now this bit is manual. rack-profiler will give you the objectspace for a running app. I'd recommend taking the objectspace dumps for several successive requests and looking for objects that aren't garbage collected, as @wagenet did in his [post on the Skylight blog](http://blog.skylight.io/hunting-for-leaks-in-ruby/).
+Right now this bit is manual. rack-objectspace will give you the objectspace for a running app. I'd recommend taking the objectspace dumps for several successive requests and looking for objects that aren't garbage collected, as @wagenet did in his [post on the Skylight blog](http://blog.skylight.io/hunting-for-leaks-in-ruby/).
 
 ## Credits
 
