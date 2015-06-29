@@ -17,7 +17,7 @@ I'd recommend installing rack-objectspace as low as you can in your stack. Prefe
 
 ## Warnings
 
-*DO NOT USE THIS IN PRODUCTION* (it's *VERY* slow - I'd recommend running it on a close-copy of production instead)
+**DO NOT USE THIS IN PRODUCTION** (it's *VERY* slow - I'd recommend running it on a close-copy of production instead)
 
 Every objectspace dump is unique to a particular ruby process. Make sure your server is only running a single worker when profiling.
 
