@@ -66,7 +66,7 @@ describe Rack::Profiler do
         middleware.store_object('key', 'address' => '0x7f930a820010', 'type' => 'OBJECT', 'flags' => { 'marked' => true })
       }.to change {
         [store['key-0x7f930a820010-type'], store['key-0x7f930a820010-flags']]
-      }.from([nil, nil]).to(['OBJECT', '{"marked":true}'])
+      }.from([nil, nil]).to(['OBJECT', { "marked" => true }])
     end
 
     it 'stores nothing if there is no address property' do
