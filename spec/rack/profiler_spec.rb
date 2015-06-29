@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'support/rack_helpers'
 require 'support/object_space_helpers'
-require 'support/file_store_helpers'
+require 'support/fake_store_helpers'
 require 'support/time_helpers'
 require 'support/rack_matchers'
 require 'rack/mock'
@@ -10,7 +10,7 @@ require 'securerandom'
 describe Rack::Profiler do
   include RackHelpers
   include ObjectSpaceHelpers
-  include FileStoreHelpers
+  include FakeStoreHelpers
   include TimeHelpers
 
   let(:env) { [418, { 'Content-Type' => 'text/plain', 'Content-Length' => '12' }, ["I'm a teapot"]] }
@@ -38,14 +38,11 @@ describe Rack::Profiler do
         STR
       end
       let(:store_id) { SecureRandom.uuid }
-      let(:store) { file_store(store_id) }
+      let(:store) { fake_store(store_id) }
 
       it 'saves every object in the object space to the store' do
-        expect {
-          response(middleware, '/endpoint')
-        }.to change {
-          file_store_keys(store_id).map { |k| store[k] }
-        }.from([]).to(['ARRAY', 'OBJECT'])
+        response(middleware, '/endpoint')
+        expect(fake_store_keys(store_id).map { |k| store[k] }).to match_array(['ARRAY', 'OBJECT'])
       end
     end
   end
