@@ -22,7 +22,7 @@ I'd recommend installing rack-objectspace as low as you can in your stack. Prefe
 * Every objectspace dump is unique to a particular ruby process. Make sure your server is only running a single worker when profiling.
 * I've found that with unicorn, requests will usually time-out when using rack-objectspace. Try increasing the `timeout` value in unicorn.rb.
 
-## How to find memory leaks
+## Finding memory leaks
 
 Right now this bit is manual. rack-objectspace will give you the objectspace for a running app. I'd recommend taking the objectspace dumps for several successive requests and looking for objects that aren't garbage collected, as @wagenet did in his [post on the Skylight blog](http://blog.skylight.io/hunting-for-leaks-in-ruby/).
 
