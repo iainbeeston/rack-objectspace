@@ -5,6 +5,8 @@ require 'securerandom'
 
 module Rack
   class Profiler
+    KEY_SEPARATOR = '-'.freeze
+
     def initialize(app, store:, async: true, object_space: ObjectSpace)
       @app = app
       @store = store
@@ -52,7 +54,7 @@ module Rack
       object_id = obj.delete('address')
       if object_id
         obj.each do |attr, value|
-          @store["#{request_id}-#{object_id}-#{attr}"] = value.to_json.gsub(/^"(.*)"$/, '\1')
+          @store[[request_id, object_id, attr].join(KEY_SEPARATOR)] = value.to_json.gsub(/^"(.*)"$/, '\1')
         end
       end
     end
@@ -62,7 +64,7 @@ module Rack
       request_path = request['PATH_INFO'].tr_s(::File::SEPARATOR, '-').sub!(/^-/, '').downcase
       request_method = request['REQUEST_METHOD'].downcase
       random_salt = SecureRandom.hex(4)
-      "#{pid}-#{timestamp}-#{request_path}-#{request_method}-#{random_salt}"
+      ['rack-profiler', pid, timestamp, request_path, request_method, random_salt].join(KEY_SEPARATOR)
     end
   end
 end

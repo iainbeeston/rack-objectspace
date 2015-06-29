@@ -59,7 +59,7 @@ describe Rack::Profiler do
     end
 
     it 'includes the process id, timestamp, request path and method' do
-      expect(middleware.request_id(request: request('/my/api/endpoint', method: 'GET'), pid: 12345, time: time(Time.at(1435347800)))).to start_with('12345-1435347800-my-api-endpoint-get')
+      expect(middleware.request_id(request: request('/my/api/endpoint', method: 'GET'), pid: 12345, time: time(Time.at(1435347800)))).to start_with('rack-profiler-12345-1435347800-my-api-endpoint-get')
     end
   end
 
